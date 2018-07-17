@@ -8,10 +8,10 @@ import library.util.MessagingLogger;
 public class CommunicationThread extends Thread {
 
 	protected Logger logger = MessagingLogger.getLogger();
-	
+
 	protected CommunicationInterface communicationListener;
 	protected Socket socket;
-	
+
 	public CommunicationThread(Socket socket) {
 		this.socket = socket;
 	}
