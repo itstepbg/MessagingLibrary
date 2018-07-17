@@ -1,4 +1,4 @@
-package exepctions;
+package library.exceptions;
 
 public class WrongMenuInputException extends Exception {
 
