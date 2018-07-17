@@ -10,7 +10,7 @@ public class MessagingLogger {
 	static {
 		FileHandler file;
 		try {
-			file = new FileHandler("basicLogging.out", true);
+			file = new FileHandler("basicLogging.log", true);
 			SimpleFormatter formatter = new SimpleFormatter();
 			file.setFormatter(formatter);
 			logger.addHandler(file);

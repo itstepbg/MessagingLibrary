@@ -29,14 +29,13 @@ public class InputThread extends CommunicationThread {
 		if (inFromClient != null) {
 			while (!socket.isClosed()) {
 				String messageXml = null;
-
 				try {
 					messageXml = inFromClient.readLine();
 					if (messageXml == null) {
 						communicationListener.closeCommunication();
 						break;
 					}
-					logger.info(messageXml);
+					logger.info("<- " + messageXml);
 				} catch (IOException e) {
 					// The read has timed-out, so we do a blocking wait for input again...
 					continue;

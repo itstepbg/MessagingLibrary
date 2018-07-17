@@ -14,7 +14,7 @@ import javax.xml.bind.Marshaller;
 import library.models.network.NetworkMessage;
 
 public class OutputThread extends CommunicationThread {
-	
+
 	private BlockingQueue<NetworkMessage> messages = new ArrayBlockingQueue<NetworkMessage>(64);
 
 	public OutputThread(Socket socket) {
@@ -48,11 +48,12 @@ public class OutputThread extends CommunicationThread {
 				} catch (InterruptedException e) {
 
 				}
-				
+
 				if (networkMessage != null) {
 					try {
 						String messageXml = serializeMessage(networkMessage);
-						outToClient.writeBytes(messageXml);
+						outToClient.writeBytes(messageXml + "\n");
+						logger.info("-> " + messageXml);
 					} catch (IOException e) {
 						// TODO ?
 						e.printStackTrace();
@@ -63,25 +64,25 @@ public class OutputThread extends CommunicationThread {
 	}
 
 	private String serializeMessage(NetworkMessage networkMessage) {
-		
+
 		String serializedMessage = null;
-		
+
 		try {
 			JAXBContext ctx = JAXBContext.newInstance(NetworkMessage.class);
 
-	        Marshaller m = ctx.createMarshaller();
-	        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+			Marshaller m = ctx.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
 
-	        StringWriter sw = new StringWriter();
-	        m.marshal(networkMessage, sw);
-	        sw.close();
-	        
-	        serializedMessage = sw.toString();
-	        
+			StringWriter sw = new StringWriter();
+			m.marshal(networkMessage, sw);
+			sw.close();
+
+			serializedMessage = sw.toString();
+
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+
 		return serializedMessage;
 	}
 }
