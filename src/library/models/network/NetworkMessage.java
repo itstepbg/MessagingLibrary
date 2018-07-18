@@ -5,8 +5,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class NetworkMessage {
 
-	public static final int ERROR_CODE_NONE = 0;
-
+	public static final int SUCCESS = 0;
+	public static final int ERROR_CREATE_USER = 1;
 	// TODO Add message error code and error message fields
 	// and error code constants.
 	private MessageType type;
@@ -16,6 +16,11 @@ public class NetworkMessage {
 	private String text;
 	private String passwordHash;
 	private String email;
+	private int status;
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
 
 	public void setType(MessageType type) {
 		this.type = type;
@@ -87,5 +92,9 @@ public class NetworkMessage {
 
 	public String getEmail() {
 		return email;
+	}
+
+	public int getStatus() {
+		return status;
 	}
 }
