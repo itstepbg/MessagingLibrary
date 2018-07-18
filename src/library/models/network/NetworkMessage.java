@@ -5,10 +5,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class NetworkMessage {
 
-	public static final int SUCCESS = 0;
-	public static final int ERROR_CREATE_USER = 1;
-	// TODO Add message error code and error message fields
-	// and error code constants.
+	public static final int STATUS_OK = 0;
+	public static final int STATUS_ERROR_CREATING_USER = 1;
+	public static final int STATUS_ERROR_LOGGING_IN = 2;
+
 	private MessageType type;
 	private String actor;
 	private String user;
