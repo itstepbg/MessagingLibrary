@@ -10,6 +10,7 @@ public class NetworkMessage {
 	public static final int STATUS_ERROR_LOGGING_IN = 2;
 
 	private MessageType type;
+	private long messageId;
 	private String actor;
 	private String user;
 	private Long groupId;
@@ -18,12 +19,16 @@ public class NetworkMessage {
 	private String email;
 	private int status;
 
-	public void setStatus(int status) {
-		this.status = status;
+	public NetworkMessage() {
+
 	}
 
 	public void setType(MessageType type) {
 		this.type = type;
+	}
+
+	public void setMessageId(long messageId) {
+		this.messageId = messageId;
 	}
 
 	public void setActor(String actor) {
@@ -50,24 +55,16 @@ public class NetworkMessage {
 		this.email = email;
 	}
 
-	public NetworkMessage() {
-
-	}
-
-	public NetworkMessage(String type, String actor, String user, Long groupId, String text, String passwordHash,
-			String email, int status) {
-
-		this.type = MessageType.valueOf(type.toUpperCase());
-		this.actor = actor;
-		this.user = user;
-		this.groupId = groupId;
-		this.text = text;
-		this.passwordHash = passwordHash;
-		this.email = email;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	public MessageType getType() {
 		return type;
+	}
+
+	public long getMessageId() {
+		return messageId;
 	}
 
 	public String getActor() {
