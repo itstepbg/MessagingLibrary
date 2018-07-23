@@ -16,7 +16,7 @@ public class CommunicationThread extends Thread {
 		this.socket = socket;
 	}
 
-	public void setCommunicationListener(CommunicationInterface communicationListener) {
-		this.communicationListener = communicationListener;
+	public void setCommunicationListener(CommunicationInterface commonCommunication) {
+		this.communicationListener = commonCommunication;
 	}
 }
