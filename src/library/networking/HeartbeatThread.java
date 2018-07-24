@@ -19,7 +19,7 @@ public class HeartbeatThread extends Thread {
 		while (!Thread.interrupted()) {
 			try {
 				if (timeoutBuffer >= CommonCommunication.TIMEOUT_BUFFER_SIZE) {
-					communicationListener.closeCommunication();
+					communicationListener.unregisterCommunication();
 				} else {
 					sleep(waitTimeInSeconds * 1000);
 					NetworkMessage heartbeat = new NetworkMessage();

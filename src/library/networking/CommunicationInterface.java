@@ -9,4 +9,6 @@ public interface CommunicationInterface {
 	public void sendMessage(NetworkMessage networkMessage);
 
 	public void closeCommunication();
+
+	public void unregisterCommunication();
 }

@@ -23,7 +23,7 @@ public class InputThread extends CommunicationThread {
 		try {
 			inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (IOException e) {
-			communicationListener.closeCommunication();
+			communicationListener.unregisterCommunication();
 		}
 
 		if (inFromClient != null) {
@@ -32,7 +32,7 @@ public class InputThread extends CommunicationThread {
 				try {
 					messageXml = inFromClient.readLine();
 					if (messageXml == null) {
-						communicationListener.closeCommunication();
+						communicationListener.unregisterCommunication();
 						break;
 					}
 					logger.info("<- " + messageXml);

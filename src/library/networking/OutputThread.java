@@ -55,7 +55,7 @@ public class OutputThread extends CommunicationThread {
 						outToClient.writeBytes(messageXml + "\n");
 						logger.info("-> " + messageXml);
 					} catch (IOException e) {
-						communicationListener.closeCommunication();
+						communicationListener.unregisterCommunication();
 					}
 				}
 			}
