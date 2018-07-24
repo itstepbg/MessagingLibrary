@@ -7,8 +7,12 @@ public class CommunicationThreadFactory {
 	public static InputThread createInputThread(Socket socket) {
 		return new InputThread(socket);
 	}
-	
+
 	public static OutputThread createOutputThread(Socket socket) {
 		return new OutputThread(socket);
+	}
+
+	public static HeartbeatThread createHeartbeatThread(int waitTimeInSeconds) {
+		return new HeartbeatThread(waitTimeInSeconds);
 	}
 }
