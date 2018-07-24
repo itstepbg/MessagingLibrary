@@ -8,7 +8,7 @@ public class HeartbeatThread extends Thread {
 	private int waitTimeInSeconds;
 	protected CommunicationInterface communicationListener;
 
-	private int pendingRequests = 0;
+	private int timeoutBuffer = 0;
 
 	public HeartbeatThread(int waitTimeInSeconds) {
 		this.waitTimeInSeconds = waitTimeInSeconds;
@@ -18,14 +18,14 @@ public class HeartbeatThread extends Thread {
 	public void run() {
 		while (!Thread.interrupted()) {
 			try {
-				if (pendingRequests > 3) {
+				if (timeoutBuffer >= CommonCommunication.TIMEOUT_BUFFER_SIZE) {
 					communicationListener.closeCommunication();
 				} else {
 					sleep(waitTimeInSeconds * 1000);
 					NetworkMessage heartbeat = new NetworkMessage();
 					heartbeat.setType(MessageType.HEARTBEAT);
 					communicationListener.sendMessage(heartbeat);
-					pendingRequests++;
+					timeoutBuffer++;
 				}
 			} catch (InterruptedException e) {
 				interrupt();
@@ -37,7 +37,7 @@ public class HeartbeatThread extends Thread {
 		this.communicationListener = communicationListener;
 	}
 
-	public void decrementPendingRequests() {
-		pendingRequests--;
+	public void resetTimeoutBuffer() {
+		timeoutBuffer = 0;
 	}
 }
