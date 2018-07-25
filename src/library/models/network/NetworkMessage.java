@@ -8,6 +8,7 @@ public class NetworkMessage {
 	public static final int STATUS_OK = 0;
 	public static final int STATUS_ERROR_CREATING_USER = 1;
 	public static final int STATUS_ERROR_LOGGING_IN = 2;
+	public static final int STATUS_ERROR_CREATING_FILE = 3;
 
 	private MessageType type;
 	private long messageId;
@@ -17,6 +18,8 @@ public class NetworkMessage {
 	private String text;
 	private String passwordHash;
 	private String email;
+	private String filePath;
+	private String newFilePath;
 	private int status;
 
 	public NetworkMessage() {
@@ -93,5 +96,21 @@ public class NetworkMessage {
 
 	public int getStatus() {
 		return status;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getNewFilePath() {
+		return newFilePath;
+	}
+
+	public void setNewFilePath(String newFilePath) {
+		this.newFilePath = newFilePath;
 	}
 }

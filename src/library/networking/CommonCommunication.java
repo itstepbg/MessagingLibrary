@@ -1,5 +1,6 @@
 package library.networking;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
@@ -17,9 +18,11 @@ public abstract class CommonCommunication {
 	protected static Logger logger = MessagingLogger.getLogger();
 
 	protected Socket communicationSocket;
+
 	protected InputThread inputThread;
 	protected OutputThread outputThread;
 	protected HeartbeatThread heartbeatThread;
+	protected FileThread fileThread;
 
 	protected long messageCounter = 0;
 	protected HashMap<Long, NetworkMessage> pendingRequests = new HashMap<>();
@@ -55,6 +58,32 @@ public abstract class CommonCommunication {
 
 	protected void clearPendingRequests(long messageId) {
 		pendingRequests.remove(messageId);
+	}
+
+	protected void handleIncomingFile(CommunicationInterface communicationListener, String path) {
+		NetworkMessage statusMessage = new NetworkMessage();
+		statusMessage.setType(MessageType.STATUS_RESPONSE);
+
+		File newFile = new File(path);
+
+		if (newFile.exists()) {
+			statusMessage.setStatus(NetworkMessage.STATUS_ERROR_CREATING_FILE);
+		} else {
+			statusMessage.setStatus(NetworkMessage.STATUS_OK);
+		}
+
+		fileThread = new FileThread(communicationListener, path, FileThread.MODE_DOWNLOAD);
+
+		communicationListener.sendMessage(statusMessage);
+	}
+
+	protected void handleFileChunk(CommunicationInterface communicationListener, String fileChunk) {
+		if (!fileThread.isInterrupted()) {
+			fileThread.addFileChunk(fileChunk);
+		} else {
+			// TODO Maybe something went wrong? Notify the other side that the file transfer
+			// could not be completed.
+		}
 	}
 
 	public void closeSocket() {

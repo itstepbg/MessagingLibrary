@@ -25,7 +25,7 @@ public class OutputThread extends CommunicationThread {
 		try {
 			messages.put(message);
 		} catch (InterruptedException e) {
-
+			// TODO ?
 		}
 	}
 
