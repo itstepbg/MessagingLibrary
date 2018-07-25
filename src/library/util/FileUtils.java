@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Base64;
 
 public class FileUtils {
@@ -16,6 +19,7 @@ public class FileUtils {
 		try {
 			outputStream.write(decodedBytes);
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -38,7 +42,8 @@ public class FileUtils {
 			file = new File(filePath);
 			outputStream = new FileOutputStream(file);
 		} catch (Exception e) {
-			// TODO: handle exception
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return outputStream;
@@ -51,25 +56,60 @@ public class FileUtils {
 			file = new File(filePath);
 			inputStream = new FileInputStream(file);
 		} catch (Exception e) {
-			// TODO: handle exception
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return inputStream;
 	}
 
-	boolean moveFile(String source, String destination) {
-		return false;
+	public static boolean createDirectory(String path) {
+		Path newDir = null;
+		try {
+			newDir = Files.createDirectories(Paths.get(path));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return newDir != null;
 	}
 
-	boolean deleteFile(String path) {
-		return false;
+	public static boolean moveFile(String sourcePath, String targetPath) {
+		Path newPath = null;
+		try {
+			newPath = Files.move(Paths.get(sourcePath), Paths.get(targetPath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return newPath != null;
 	}
 
-	boolean renameFile(String path, String newName) {
-		return false;
+	public static boolean renameFile(String path, String newPath) {
+		File file = new File(path);
+		return file.renameTo(new File(newPath));
 	}
 
-	boolean createDirectory(String path) {
-		return false;
+	public static boolean copyFile(String sourcePath, String targetPath) {
+		Path newPath = null;
+		try {
+			newPath = Files.copy(Paths.get(sourcePath), Paths.get(targetPath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return newPath != null;
+	}
+
+	public static boolean deleteFile(String path) {
+		boolean success = false;
+		try {
+			Files.delete(Paths.get(path));
+			success = true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return success;
 	}
 }
