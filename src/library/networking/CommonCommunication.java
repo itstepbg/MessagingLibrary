@@ -10,7 +10,7 @@ import library.models.network.MessageType;
 import library.models.network.NetworkMessage;
 import library.util.MessagingLogger;
 
-public abstract class CommonCommunication {
+public class CommonCommunication implements CommunicationInterface {
 
 	public final static int HEARTBEAT_INTERVAL = 2;
 	public final static int TIMEOUT_BUFFER_SIZE = 3;
@@ -33,16 +33,65 @@ public abstract class CommonCommunication {
 		inputThread = CommunicationThreadFactory.createInputThread(communicationSocket);
 		outputThread = CommunicationThreadFactory.createOutputThread(communicationSocket);
 		heartbeatThread = CommunicationThreadFactory.createHeartbeatThread(HEARTBEAT_INTERVAL);
+
+		startCommunicationThreads();
 	}
 
-	protected void startCommunicationThreads(CommunicationInterface communicationListener) {
-		inputThread.setCommunicationListener(communicationListener);
-		outputThread.setCommunicationListener(communicationListener);
-		heartbeatThread.setCommunicationListener(communicationListener);
+	protected void startCommunicationThreads() {
+		inputThread.setCommunicationListener(this);
+		outputThread.setCommunicationListener(this);
+		heartbeatThread.setCommunicationListener(this);
 
 		inputThread.start();
 		outputThread.start();
 		heartbeatThread.start();
+	}
+
+	@Override
+	public void sendMessage(NetworkMessage networkMessage) {
+		updateMessageCounter(networkMessage);
+		outputThread.addMessage(networkMessage);
+	}
+
+	@Override
+	public void handleMessage(NetworkMessage networkMessage) {
+		// TODO This implementation will be empty for now. All common message handling
+		// code should be moved here in the future.
+	}
+
+	@Override
+	public void closeCommunication() {
+		logger.info("Closing communication for " + communicationSocket.getInetAddress().getHostAddress());
+
+		if (!communicationSocket.isClosed()) {
+			try {
+				communicationSocket.shutdownInput();
+				communicationSocket.shutdownOutput();
+				communicationSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		interruptThread(heartbeatThread);
+
+		// TODO Maybe remove the code below? It is used as a failsafe now.
+		interruptThread(inputThread);
+		interruptThread(outputThread);
+		// TODO Maybe the file thread reference should be removed when it dies?
+		interruptThread(fileThread);
+	}
+
+	private void interruptThread(Thread thread) {
+		if (thread != null && thread.isAlive()) {
+			thread.interrupt();
+		}
+	}
+
+	@Override
+	public void unregisterCommunication() {
+		closeCommunication();
 	}
 
 	protected void updateMessageCounter(NetworkMessage networkMessage) {
@@ -60,7 +109,7 @@ public abstract class CommonCommunication {
 		pendingRequests.remove(messageId);
 	}
 
-	protected void handleIncomingFile(CommunicationInterface communicationListener, String path) {
+	protected void handleIncomingFile(String path) {
 		NetworkMessage statusMessage = new NetworkMessage();
 		statusMessage.setType(MessageType.STATUS_RESPONSE);
 
@@ -70,14 +119,13 @@ public abstract class CommonCommunication {
 			statusMessage.setStatus(NetworkMessage.STATUS_ERROR_CREATING_FILE);
 		} else {
 			statusMessage.setStatus(NetworkMessage.STATUS_OK);
+			fileThread = new FileThread(this, path, FileThread.MODE_DOWNLOAD);
 		}
 
-		fileThread = new FileThread(communicationListener, path, FileThread.MODE_DOWNLOAD);
-
-		communicationListener.sendMessage(statusMessage);
+		sendMessage(statusMessage);
 	}
 
-	protected void handleFileChunk(CommunicationInterface communicationListener, String fileChunk) {
+	protected void handleFileChunk(String fileChunk) {
 		if (!fileThread.isInterrupted()) {
 			fileThread.addFileChunk(fileChunk);
 		} else {

@@ -11,7 +11,7 @@ public class NetworkMessage {
 	public static final int STATUS_ERROR_CREATING_FILE = 3;
 
 	private MessageType type;
-	private long messageId;
+	private Long messageId;
 	private String actor;
 	private String user;
 	private Long groupId;
@@ -20,7 +20,7 @@ public class NetworkMessage {
 	private String email;
 	private String filePath;
 	private String newFilePath;
-	private int status;
+	private Integer status;
 
 	public NetworkMessage() {
 
@@ -30,7 +30,7 @@ public class NetworkMessage {
 		this.type = type;
 	}
 
-	public void setMessageId(long messageId) {
+	public void setMessageId(Long messageId) {
 		this.messageId = messageId;
 	}
 
@@ -58,7 +58,7 @@ public class NetworkMessage {
 		this.email = email;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
@@ -66,7 +66,7 @@ public class NetworkMessage {
 		return type;
 	}
 
-	public long getMessageId() {
+	public Long getMessageId() {
 		return messageId;
 	}
 
@@ -94,7 +94,7 @@ public class NetworkMessage {
 		return email;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 

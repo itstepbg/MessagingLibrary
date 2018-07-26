@@ -61,7 +61,7 @@ public class FileThread extends Thread {
 
 	private void uploadFile() {
 		// READING
-		while (true) {
+		while (!Thread.interrupted()) {
 			String base64 = FileUtils.readFromFile(inputStream, offset);
 
 			if (base64 == null) {

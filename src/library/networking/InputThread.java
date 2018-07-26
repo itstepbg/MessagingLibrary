@@ -18,27 +18,27 @@ public class InputThread extends CommunicationThread {
 
 	@Override
 	public void run() {
-		BufferedReader inFromClient = null;
+		BufferedReader inputReader = null;
 
 		try {
-			inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (IOException e) {
 			communicationListener.unregisterCommunication();
 		}
 
-		if (inFromClient != null) {
-			while (!socket.isClosed()) {
+		if (inputReader != null) {
+			while (!Thread.interrupted()) {
 				String messageXml = null;
 				try {
-					messageXml = inFromClient.readLine();
+					messageXml = inputReader.readLine();
 					if (messageXml == null) {
 						communicationListener.unregisterCommunication();
 						break;
 					}
 					logger.info("<- " + messageXml);
 				} catch (IOException e) {
-					// The read has timed-out, so we do a blocking wait for input again...
-					continue;
+					// The input has been shut down, finish the thread execution.
+					break;
 				}
 
 				NetworkMessage networkMessage = deserializeMessage(messageXml);

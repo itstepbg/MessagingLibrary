@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -41,12 +40,12 @@ public class OutputThread extends CommunicationThread {
 		}
 
 		if (outToClient != null) {
-			while (!socket.isClosed()) {
+			while (!Thread.interrupted()) {
 				NetworkMessage networkMessage = null;
 				try {
-					networkMessage = messages.poll(2, TimeUnit.SECONDS);
+					networkMessage = messages.take();
 				} catch (InterruptedException e) {
-
+					interrupt();
 				}
 
 				if (networkMessage != null) {
