@@ -14,7 +14,7 @@ import java.util.Base64;
 public class FileUtils {
 
 	public final static int FILE_READ_WRITE_BUFFER_SIZE = 512;
-	public final static String EOF_TAG = "</EOF>";
+	public final static String EOF_TAG = "!EOF!";
 
 	// TODO Read and write should be done through file channels.
 	public static void writeToFile(OutputStream outputStream, String base64) {
@@ -28,19 +28,30 @@ public class FileUtils {
 		}
 	}
 
-	public static String readFromFile(InputStream inputStream, int offset) {
+	public static String readFromFile(InputStream inputStream) {
 		int totalBytesRead = -1;
-		byte[] readChunk = null;
+		byte[] readBuffer = new byte[FILE_READ_WRITE_BUFFER_SIZE];
+		byte[] readChunk = new byte[] {};
+
 		try {
-			totalBytesRead = inputStream.read(readChunk, offset, FILE_READ_WRITE_BUFFER_SIZE);
+			totalBytesRead = inputStream.read(readBuffer, 0, FILE_READ_WRITE_BUFFER_SIZE);
+			if (totalBytesRead > -1) {
+				if (totalBytesRead < FILE_READ_WRITE_BUFFER_SIZE) {
+					readChunk = new byte[totalBytesRead];
+					System.arraycopy(readBuffer, 0, readChunk, 0, totalBytesRead);
+				} else {
+					readChunk = readBuffer;
+				}
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (totalBytesRead > -1) {
+
+		if (totalBytesRead > 0) {
 			return Base64.getEncoder().encodeToString(readChunk);
 		} else {
-			return null;
+			return FileUtils.EOF_TAG;
 		}
 	}
 
@@ -120,21 +131,5 @@ public class FileUtils {
 			e.printStackTrace();
 		}
 		return success;
-	}
-
-	public static int calculateOriginalNumberOfBytes(String base64) {
-		int result = -1;
-		if (base64 != null & !base64.equals("")) {
-			int padding = 0;
-			if (base64.endsWith("==")) {
-				padding = 2;
-			} else {
-				if (base64.endsWith("=")) {
-					padding = 1;
-				}
-			}
-			result = (((int) (Math.ceil(base64.length() / 4) * 3)) - padding) * 3;
-		}
-		return result;
 	}
 }

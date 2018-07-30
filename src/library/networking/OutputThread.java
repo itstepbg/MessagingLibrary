@@ -14,7 +14,7 @@ import library.models.network.NetworkMessage;
 
 public class OutputThread extends CommunicationThread {
 
-	private BlockingQueue<NetworkMessage> messages = new ArrayBlockingQueue<NetworkMessage>(64);
+	private BlockingQueue<NetworkMessage> messages = new ArrayBlockingQueue<NetworkMessage>(512);
 
 	public OutputThread(Socket socket) {
 		super(socket);
@@ -76,7 +76,6 @@ public class OutputThread extends CommunicationThread {
 			sw.close();
 
 			serializedMessage = sw.toString();
-
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

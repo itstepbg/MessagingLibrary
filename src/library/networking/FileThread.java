@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import library.models.network.MessageType;
 import library.models.network.NetworkMessage;
 import library.util.FileUtils;
+import library.util.MessagingLogger;
 
 public class FileThread extends Thread {
 
@@ -17,14 +18,13 @@ public class FileThread extends Thread {
 
 	private CommunicationInterface communicationListener;
 
-	private BlockingQueue<String> fileChunks = new ArrayBlockingQueue<>(16);
+	private BlockingQueue<String> fileChunks = new ArrayBlockingQueue<>(1024);
 
 	private String path;
 	private InputStream inputStream;
 	private OutputStream outputStream;
 
 	private int mode;
-	private int offset = 0;
 
 	public FileThread(CommunicationInterface communicationListener, String path, int mode) {
 		this.communicationListener = communicationListener;
@@ -49,7 +49,7 @@ public class FileThread extends Thread {
 		} catch (InterruptedException e) {
 			// TODO Maybe something else is needed as well?
 			try {
-				inputStream.close();
+				outputStream.close();
 			} catch (IOException ioe) {
 				// TODO Auto-generated catch block
 				ioe.printStackTrace();
@@ -62,15 +62,7 @@ public class FileThread extends Thread {
 	private void uploadFile() {
 		// READING
 		while (!Thread.interrupted()) {
-			String base64 = FileUtils.readFromFile(inputStream, offset);
-
-			if (base64 == null) {
-				base64 = FileUtils.EOF_TAG;
-			} else if (FileUtils.calculateOriginalNumberOfBytes(base64) < FileUtils.FILE_READ_WRITE_BUFFER_SIZE) {
-				base64 += FileUtils.EOF_TAG;
-			} else {
-				offset += FileUtils.FILE_READ_WRITE_BUFFER_SIZE;
-			}
+			String base64 = FileUtils.readFromFile(inputStream);
 
 			NetworkMessage networkMessage = new NetworkMessage();
 			networkMessage.setType(MessageType.UPLOAD_CHUNK);
@@ -78,9 +70,10 @@ public class FileThread extends Thread {
 
 			communicationListener.sendMessage(networkMessage);
 
-			if (base64.endsWith(FileUtils.EOF_TAG)) {
+			if (base64.equals(FileUtils.EOF_TAG)) {
 				try {
 					inputStream.close();
+					MessagingLogger.getLogger().info("Closed file input.");
 					// TODO Notify the other side that the file transfer was successfully completed.
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -96,20 +89,12 @@ public class FileThread extends Thread {
 		// WRITING
 		while (!Thread.interrupted()) {
 			try {
-				String chunk = fileChunks.take();
-				if (chunk != null) {
-					boolean eof = false;
-					String base64 = chunk;
-					if (chunk.endsWith(FileUtils.EOF_TAG)) {
-						eof = true;
-						base64 = chunk.replace(FileUtils.EOF_TAG, "");
-					}
-
-					FileUtils.writeToFile(outputStream, base64);
-
-					if (eof) {
+				String base64 = fileChunks.take();
+				if (base64 != null) {
+					if (base64.equals(FileUtils.EOF_TAG)) {
 						try {
 							outputStream.close();
+							MessagingLogger.getLogger().info("Closed file output.");
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -118,6 +103,8 @@ public class FileThread extends Thread {
 							interrupt();
 						}
 						break;
+					} else {
+						FileUtils.writeToFile(outputStream, base64);
 					}
 				}
 			} catch (InterruptedException e) {

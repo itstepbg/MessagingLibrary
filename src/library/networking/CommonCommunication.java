@@ -12,7 +12,7 @@ import library.util.MessagingLogger;
 
 public class CommonCommunication implements CommunicationInterface {
 
-	public final static int HEARTBEAT_INTERVAL = 2;
+	public final static int HEARTBEAT_INTERVAL = 5;
 	public final static int TIMEOUT_BUFFER_SIZE = 3;
 
 	protected static Logger logger = MessagingLogger.getLogger();
@@ -49,30 +49,21 @@ public class CommonCommunication implements CommunicationInterface {
 
 	@Override
 	public void sendMessage(NetworkMessage networkMessage) {
+		// TODO All sent messages should have an actor if the user is logged in.
 		updateMessageCounter(networkMessage);
 		outputThread.addMessage(networkMessage);
 	}
 
 	@Override
 	public void handleMessage(NetworkMessage networkMessage) {
-		// TODO This implementation will be empty for now. All common message handling
-		// code should be moved here in the future.
+		heartbeatThread.resetTimeoutBuffer();
 	}
 
 	@Override
 	public void closeCommunication() {
 		logger.info("Closing communication for " + communicationSocket.getInetAddress().getHostAddress());
 
-		if (!communicationSocket.isClosed()) {
-			try {
-				communicationSocket.shutdownInput();
-				communicationSocket.shutdownOutput();
-				communicationSocket.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		closeSocket();
 
 		interruptThread(heartbeatThread);
 
@@ -94,8 +85,22 @@ public class CommonCommunication implements CommunicationInterface {
 		closeCommunication();
 	}
 
+	private void closeSocket() {
+		if (!communicationSocket.isClosed()) {
+			try {
+				communicationSocket.shutdownInput();
+				communicationSocket.shutdownOutput();
+				communicationSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	protected void updateMessageCounter(NetworkMessage networkMessage) {
-		if (networkMessage.getType() != MessageType.HEARTBEAT) {
+		MessageType messageType = networkMessage.getType();
+		if (messageType != MessageType.HEARTBEAT && messageType != MessageType.UPLOAD_CHUNK) {
 			networkMessage.setMessageId(messageCounter);
 			messageCounter++;
 		}
@@ -108,6 +113,8 @@ public class CommonCommunication implements CommunicationInterface {
 	protected void clearPendingRequests(long messageId) {
 		pendingRequests.remove(messageId);
 	}
+
+	// File stuff.
 
 	protected void handleIncomingFile(String path) {
 		NetworkMessage statusMessage = new NetworkMessage();
@@ -122,23 +129,23 @@ public class CommonCommunication implements CommunicationInterface {
 			fileThread = new FileThread(this, path, FileThread.MODE_DOWNLOAD);
 		}
 
+		fileThread.start();
 		sendMessage(statusMessage);
 	}
 
 	protected void handleFileChunk(String fileChunk) {
-		if (!fileThread.isInterrupted()) {
-			fileThread.addFileChunk(fileChunk);
-		} else {
-			// TODO Maybe something went wrong? Notify the other side that the file transfer
-			// could not be completed.
-		}
+		fileThread.addFileChunk(fileChunk);
 	}
 
-	public void closeSocket() {
-		try {
-			communicationSocket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void createFileUploadThread(String filePath) {
+		fileThread = new FileThread(this, filePath, FileThread.MODE_UPLOAD);
+	}
+
+	protected void startFileUpload() {
+		fileThread.start();
+	}
+
+	protected void clearFileUploadThread() {
+		fileThread = null;
 	}
 }
