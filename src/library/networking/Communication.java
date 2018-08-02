@@ -10,7 +10,7 @@ import library.models.network.MessageType;
 import library.models.network.NetworkMessage;
 import library.util.MessagingLogger;
 
-public class CommonCommunication implements CommunicationInterface {
+public class Communication implements CommunicationInterface {
 
 	public final static int HEARTBEAT_INTERVAL = 5;
 	public final static int TIMEOUT_BUFFER_SIZE = 3;
@@ -18,7 +18,8 @@ public class CommonCommunication implements CommunicationInterface {
 	protected static Logger logger = MessagingLogger.getLogger();
 
 	protected Socket communicationSocket;
-
+	protected String salt;
+	protected String sessionID;
 	protected InputThread inputThread;
 	protected OutputThread outputThread;
 	protected HeartbeatThread heartbeatThread;
@@ -27,7 +28,7 @@ public class CommonCommunication implements CommunicationInterface {
 	protected long messageCounter = 0;
 	protected HashMap<Long, NetworkMessage> pendingRequests = new HashMap<>();
 
-	public CommonCommunication(Socket communicationSocket) {
+	public Communication(Socket communicationSocket) {
 		this.communicationSocket = communicationSocket;
 
 		inputThread = CommunicationThreadFactory.createInputThread(communicationSocket);
@@ -74,6 +75,22 @@ public class CommonCommunication implements CommunicationInterface {
 		interruptThread(fileThread);
 	}
 
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
+	public String getSessionID() {
+		return sessionID;
+	}
+
+	public void setSessionID(String sessionID) {
+		this.sessionID = sessionID;
+	}
+
 	private void interruptThread(Thread thread) {
 		if (thread != null && thread.isAlive()) {
 			thread.interrupt();
@@ -100,7 +117,8 @@ public class CommonCommunication implements CommunicationInterface {
 
 	protected void updateMessageCounter(NetworkMessage networkMessage) {
 		MessageType messageType = networkMessage.getType();
-		if (messageType != MessageType.HEARTBEAT && messageType != MessageType.UPLOAD_CHUNK) {
+		if (messageType != MessageType.HEARTBEAT && messageType != MessageType.STATUS_RESPONSE
+				&& messageType != MessageType.UPLOAD_CHUNK) {
 			networkMessage.setMessageId(messageCounter);
 			messageCounter++;
 		}

@@ -18,7 +18,7 @@ public class HeartbeatThread extends Thread {
 	public void run() {
 		while (!Thread.interrupted()) {
 			try {
-				if (timeoutBuffer >= CommonCommunication.TIMEOUT_BUFFER_SIZE) {
+				if (timeoutBuffer >= Communication.TIMEOUT_BUFFER_SIZE) {
 					communicationListener.unregisterCommunication();
 				} else {
 					sleep(waitTimeInSeconds * 1000);
