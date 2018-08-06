@@ -117,19 +117,21 @@ public class FileUtils {
 		return file.renameTo(new File(newPath));
 	}
 
-	public static void copyFile(String sourcePath, String targetPath) {
-		// Path newPath = null;
+	public static boolean copyFile(String sourcePath, String targetPath) {
+		Path newPath = null;
 		// if source or target path doesn't exist
 		// or the file that we are copying, already exists in the target directory
-
+		if (!Files.exists(Paths.get(sourcePath)) || Files.exists(Paths.get(targetPath))) {
+			return false;
+		}
 		try {
-			Files.copy(Paths.get(sourcePath), Paths.get(targetPath));
-			// newPath = FileUtils.copyFileToDirectory(sourcePath, targetPath);
+			newPath = Files.copy(Paths.get(sourcePath), Paths.get(targetPath));
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// return newPath != null;
+		return newPath != null;
 	}
 
 	public static boolean deleteFile(String path) {
