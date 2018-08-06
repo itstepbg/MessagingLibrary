@@ -9,6 +9,9 @@ public class NetworkMessage {
 	public static final int STATUS_ERROR_CREATING_USER = 1;
 	public static final int STATUS_ERROR_LOGGING_IN = 2;
 	public static final int STATUS_ERROR_CREATING_FILE = 3;
+	public static final int STATUS_ERROR_DELETING_FILE = 4;
+	public static final int STATUS_ERROR_COPYING_FILE = 5;
+	public static final Integer STATUS_ERROR_CREATING_DIRECTORY = 6;
 
 	private MessageType type;
 	private Long messageId;
