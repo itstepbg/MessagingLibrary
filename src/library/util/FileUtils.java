@@ -87,10 +87,9 @@ public class FileUtils {
 		Path newDir = null;
 		try {
 			if (Files.exists(Paths.get(path))) {
-				//newDir = Files.createDirectories(Paths.get(path));
+				newDir = Files.createDirectories(Paths.get(path));
 				return false;
-			}
-			else {
+			} else {
 				newDir = Files.createDirectories(Paths.get(path));
 				return true;
 			}
@@ -118,20 +117,19 @@ public class FileUtils {
 		return file.renameTo(new File(newPath));
 	}
 
-	public static boolean copyFile(String sourcePath, String targetPath) {
-		Path newPath = null;
-		//if source or target path doesn't exist
-		//or the file that we are copying, already exists in the target directory
-		if ((!Files.exists(Paths.get(sourcePath)) || (!Files.exists(Paths.get(targetPath))))) {
-			return false;
-		}
+	public static void copyFile(String sourcePath, String targetPath) {
+		// Path newPath = null;
+		// if source or target path doesn't exist
+		// or the file that we are copying, already exists in the target directory
+
 		try {
-			newPath = Files.copy(Paths.get(sourcePath), Paths.get(targetPath));
+			Files.copy(Paths.get(sourcePath), Paths.get(targetPath));
+			// newPath = FileUtils.copyFileToDirectory(sourcePath, targetPath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return newPath != null;
+		// return newPath != null;
 	}
 
 	public static boolean deleteFile(String path) {
