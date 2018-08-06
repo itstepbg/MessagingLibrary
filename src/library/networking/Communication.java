@@ -12,7 +12,7 @@ import library.util.MessagingLogger;
 
 public class Communication implements CommunicationInterface {
 
-	public final static int HEARTBEAT_INTERVAL = 5;
+	public final static int HEARTBEAT_INTERVAL = 50;
 	public final static int TIMEOUT_BUFFER_SIZE = 3;
 
 	protected static Logger logger = MessagingLogger.getLogger();
@@ -134,7 +134,7 @@ public class Communication implements CommunicationInterface {
 
 	// File stuff.
 
-	protected void handleIncomingFile(String path) {
+	protected void handleIncomingFile(String path, Long messageId) {
 		NetworkMessage statusMessage = new NetworkMessage();
 		statusMessage.setType(MessageType.STATUS_RESPONSE);
 
@@ -148,6 +148,7 @@ public class Communication implements CommunicationInterface {
 		}
 
 		fileThread.start();
+		statusMessage.setMessageId(messageId);
 		sendMessage(statusMessage);
 	}
 
