@@ -5,7 +5,7 @@ import library.models.network.NetworkMessage;
 
 public class HeartbeatThread extends Thread {
 
-	private int waitTimeInSeconds;
+	private int waitTimeInSeconds = 60; // default 60 sec.
 	protected CommunicationInterface communicationListener;
 
 	private int timeoutBuffer = 0;
