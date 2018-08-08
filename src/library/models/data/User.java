@@ -5,10 +5,15 @@ import java.net.InetAddress;
 public class User {
 
 	public final static String TABLE_NAME = "users";
+	public final static String TABLE_NAME_SHARED_FILES = "shared_files";
 	public final static String COLUMN_ID = "id";
 	public final static String COLUMN_NAME = "name";
 	public final static String COLUMN_PASSWORD_HASH = "passwordHash";
 	public final static String COLUMN_EMAIL = "email";
+	public final static String COLUMN_USER_SHARED_TO = "user_shared_to";
+	public final static String COLUMN_USER_SHARED_FROM = "user_shared_from";
+	public final static String COLUMN_FILE_NAME = "file_name";
+	public final static String COLUMN_FILE_PATH = "file_path";
 
 	private enum Status {
 		OFFLINE, ONLINE, AWAY, INVISIBLE, DND
@@ -25,6 +30,8 @@ public class User {
 	private String email;
 
 	private InetAddress ipAddress;
+	private String userNameSharedTo;
+	private String filePathSharedFile;
 
 	public User() {
 
@@ -40,6 +47,12 @@ public class User {
 	public User(long id, String name, String passwordHash, String email) {
 		this(name, passwordHash, email);
 		this.userId = id;
+	}
+
+	public User(String userNameSharedTo, String filePathSharedFile) {
+		this.setUserNameSharedTo(userNameSharedTo);
+		this.setFilePathSharedFile(filePathSharedFile);
+
 	}
 
 	// Created field accessors.
@@ -89,6 +102,22 @@ public class User {
 
 	public void setUserId(long userId) {
 		this.userId = userId;
+	}
+
+	public String getUserNameSharedTo() {
+		return userNameSharedTo;
+	}
+
+	public void setUserNameSharedTo(String userNameSharedTo) {
+		this.userNameSharedTo = userNameSharedTo;
+	}
+
+	public String getFilePathSharedFile() {
+		return filePathSharedFile;
+	}
+
+	public void setFilePathSharedFile(String filePathSharedFile) {
+		this.filePathSharedFile = filePathSharedFile;
 	}
 
 }

@@ -2,6 +2,8 @@ package library.models.network;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import library.models.data.Directory;
+
 @XmlRootElement
 public class NetworkMessage {
 
@@ -24,6 +26,7 @@ public class NetworkMessage {
 	private String filePath;
 	private String newFilePath;
 	private Integer status;
+	private Directory fileList;
 
 	public NetworkMessage() {
 
@@ -115,5 +118,13 @@ public class NetworkMessage {
 
 	public void setNewFilePath(String newFilePath) {
 		this.newFilePath = newFilePath;
+	}
+
+	public Directory getFileList() {
+		return fileList;
+	}
+
+	public void setFileList(Directory fileList) {
+		this.fileList = fileList;
 	}
 }
