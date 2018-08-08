@@ -13,6 +13,8 @@ public class NetworkMessage {
 	private MessageType type;
 	private Long messageId;
 	private String clientFQDN;
+	private String salt;
+	private int iterations;
 	private String actor;
 	private String user;
 	private Long groupId;
@@ -121,5 +123,21 @@ public class NetworkMessage {
 
 	public void setClientFQDN(String clientFQDN) {
 		this.clientFQDN = clientFQDN;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt2) {
+		this.salt = salt2;
+	}
+
+	public int getIterations() {
+		return iterations;
+	}
+
+	public void setIterations(int encodedIterations) {
+		this.iterations = encodedIterations;
 	}
 }

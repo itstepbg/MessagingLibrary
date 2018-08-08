@@ -1,10 +1,12 @@
 package library.util;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Formatter;
+import java.util.Random;
 
 public class Crypto {
 
@@ -33,17 +35,6 @@ public class Crypto {
 		return result;
 	}
 
-	public static byte[] generateRandomBytes(int length) {
-		byte[] bytes = new byte[length];
-		try {
-			SecureRandom.getInstanceStrong().nextBytes(bytes);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return bytes;
-	}
-
 	// TODO Add the session ID to the salting process for extra security.
 	public static String saltPassword(String salt, String passwordHash, int iterations) {
 		String result = passwordHash;
@@ -54,4 +45,33 @@ public class Crypto {
 
 		return result;
 	}
+
+	public static byte[] generateRandomSalt() {
+		byte[] salt = new byte[8];
+		try {
+			SecureRandom.getInstanceStrong().nextBytes(salt);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		return salt;
+
+	}
+
+	public static int getRandomIterations() {
+		Random random = new Random();
+		int maximum = 4096;
+		int minimum = 1024;
+
+		return random.nextInt((maximum - minimum) + 1) + minimum;
+
+	}
+
+	public static byte[] intToBytes( final int i ) {
+	    ByteBuffer bb = ByteBuffer.allocate(4);
+	    bb.putInt(i);
+	    return bb.array();
+	}
+
+
 }
