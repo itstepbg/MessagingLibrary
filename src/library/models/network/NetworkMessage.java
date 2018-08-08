@@ -12,7 +12,6 @@ public class NetworkMessage {
 
 	private MessageType type;
 	private Long messageId;
-	private String clientFQDN;
 	private String actor;
 	private String user;
 	private Long groupId;
@@ -113,13 +112,5 @@ public class NetworkMessage {
 
 	public void setNewFilePath(String newFilePath) {
 		this.newFilePath = newFilePath;
-	}
-
-	public String getClientFQDN() {
-		return clientFQDN;
-	}
-
-	public void setClientFQDN(String clientFQDN) {
-		this.clientFQDN = clientFQDN;
 	}
 }
