@@ -30,7 +30,10 @@ public class User {
 	private String email;
 
 	private InetAddress ipAddress;
+
 	private String userNameSharedTo;
+	private String userNameSharedFrom;
+	private String fileName;
 	private String filePathSharedFile;
 
 	public User() {
@@ -49,10 +52,11 @@ public class User {
 		this.userId = id;
 	}
 
-	public User(String userNameSharedTo, String filePathSharedFile) {
-		this.setUserNameSharedTo(userNameSharedTo);
-		this.setFilePathSharedFile(filePathSharedFile);
-
+	public User(String userNameSharedTo, String userNameSharedFrom, String fileName, String filePathSharedFile) {
+		this.userNameSharedTo = userNameSharedTo;
+		this.userNameSharedFrom = userNameSharedFrom;
+		this.fileName = fileName;
+		this.filePathSharedFile = filePathSharedFile;
 	}
 
 	// Created field accessors.
@@ -112,12 +116,28 @@ public class User {
 		this.userNameSharedTo = userNameSharedTo;
 	}
 
+	public String getUserNameSharedFrom() {
+		return userNameSharedFrom;
+	}
+
+	public void setUserNameSharedFrom(String userNameSharedFrom) {
+		this.userNameSharedFrom = userNameSharedFrom;
+	}
+
 	public String getFilePathSharedFile() {
 		return filePathSharedFile;
 	}
 
 	public void setFilePathSharedFile(String filePathSharedFile) {
 		this.filePathSharedFile = filePathSharedFile;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setfileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 }

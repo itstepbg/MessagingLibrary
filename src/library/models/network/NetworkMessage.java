@@ -30,6 +30,7 @@ public class NetworkMessage {
 	private String newFilePath;
 	private Integer status;
 	private Directory fileList;
+	private String fileName;
 
 	public NetworkMessage() {
 
@@ -129,5 +130,13 @@ public class NetworkMessage {
 
 	public void setFileList(Directory fileList) {
 		this.fileList = fileList;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }
