@@ -103,6 +103,9 @@ public class FileUtils {
 
 	public static boolean moveFile(String sourcePath, String targetPath) {
 		Path newPath = null;
+		if (!Files.exists(Paths.get(sourcePath)) || Files.exists(Paths.get(targetPath))) {
+			return false;
+		}
 		try {
 			newPath = Files.move(Paths.get(sourcePath), Paths.get(targetPath));
 		} catch (IOException e) {
@@ -119,7 +122,7 @@ public class FileUtils {
 
 	public static boolean copyFile(String sourcePath, String targetPath) {
 		Path newPath = null;
-		// if source or target path doesn't exist
+		// if source path doesn't exist
 		// or the file that we are copying, already exists in the target directory
 		if (!Files.exists(Paths.get(sourcePath)) || Files.exists(Paths.get(targetPath))) {
 			return false;

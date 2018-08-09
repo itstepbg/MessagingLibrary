@@ -152,12 +152,34 @@ public class Communication implements CommunicationInterface {
 		sendMessage(statusMessage);
 	}
 
+	protected void handleOutcomingFile(String path, Long messageId) {
+		NetworkMessage statusMessage = new NetworkMessage();
+		statusMessage.setType(MessageType.STATUS_RESPONSE);
+
+		File newFile = new File(path);
+
+		if (!newFile.exists()) {
+			statusMessage.setStatus(NetworkMessage.STATUS_ERROR_DOWNLOADING_FILE);
+		} else {
+			statusMessage.setStatus(NetworkMessage.STATUS_OK);
+			fileThread = new FileThread(this, path, FileThread.MODE_UPLOAD);
+		}
+
+		fileThread.start();
+		statusMessage.setMessageId(messageId);
+		sendMessage(statusMessage);
+	}
+
 	protected void handleFileChunk(String fileChunk) {
 		fileThread.addFileChunk(fileChunk);
 	}
 
 	public void createFileUploadThread(String filePath) {
 		fileThread = new FileThread(this, filePath, FileThread.MODE_UPLOAD);
+	}
+
+	public void createFileDownloadThread(String filePath) {
+		fileThread = new FileThread(this, filePath, FileThread.MODE_DOWNLOAD);
 	}
 
 	protected void startFileUpload() {

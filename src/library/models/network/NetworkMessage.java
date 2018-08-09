@@ -13,7 +13,10 @@ public class NetworkMessage {
 	public static final int STATUS_ERROR_CREATING_FILE = 3;
 	public static final int STATUS_ERROR_DELETING_FILE = 4;
 	public static final int STATUS_ERROR_COPYING_FILE = 5;
-	public static final Integer STATUS_ERROR_CREATING_DIRECTORY = 6;
+	public static final int STATUS_ERROR_CREATING_DIRECTORY = 6;
+	public static final int STATUS_ERROR_MOVING_FILE = 7;
+	public static final int STATUS_ERROR_RENAME_FILE = 8;
+	public static final int STATUS_ERROR_DOWNLOADING_FILE = 9;
 
 	private MessageType type;
 	private Long messageId;
