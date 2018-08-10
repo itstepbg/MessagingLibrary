@@ -33,7 +33,7 @@ public class Communication implements CommunicationInterface {
 
 		inputThread = CommunicationThreadFactory.createInputThread(communicationSocket);
 		outputThread = CommunicationThreadFactory.createOutputThread(communicationSocket);
-		heartbeatThread = CommunicationThreadFactory.createHeartbeatThread(HEARTBEAT_INTERVAL);
+		//heartbeatThread = CommunicationThreadFactory.createHeartbeatThread(HEARTBEAT_INTERVAL);
 
 		startCommunicationThreads();
 	}
@@ -41,11 +41,11 @@ public class Communication implements CommunicationInterface {
 	protected void startCommunicationThreads() {
 		inputThread.setCommunicationListener(this);
 		outputThread.setCommunicationListener(this);
-		heartbeatThread.setCommunicationListener(this);
+		//heartbeatThread.setCommunicationListener(this);
 
 		inputThread.start();
 		outputThread.start();
-		heartbeatThread.start();
+		//heartbeatThread.start();
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class Communication implements CommunicationInterface {
 
 	@Override
 	public void handleMessage(NetworkMessage networkMessage) {
-		heartbeatThread.resetTimeoutBuffer();
+	//	heartbeatThread.resetTimeoutBuffer();
 	}
 
 	@Override

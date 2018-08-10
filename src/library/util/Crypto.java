@@ -47,7 +47,7 @@ public class Crypto {
 	}
 
 	public static byte[] generateRandomSalt() {
-		byte[] salt = new byte[8];
+		byte[] salt = new byte[16];
 		try {
 			SecureRandom.getInstanceStrong().nextBytes(salt);
 		} catch (NoSuchAlgorithmException e) {
