@@ -151,32 +151,25 @@ public class FileUtils {
 		return success;
 	}
 
-	public static Directory listFiles(String dir, Directory dafaultDir) {
-
+	public static Directory listFiles(String dir, Directory defaultDir) {
 		File file = new File(dir);
-		Directory currentDir = new Directory(dir);
+
 		File[] listFiles = file.listFiles();
-		System.out.println(listFiles.length);
-		if (listFiles.length == 0) {
-			return new Directory(dafaultDir.getName());
-		}
 
 		for (File subFile : listFiles) {
 			if (subFile.isDirectory()) {
 				// add it to list directories and recur it
 				Directory newDir = new Directory(subFile.getPath());
-				dafaultDir.addDirectory(currentDir);
-				currentDir.addDirectory(newDir);
-				if (!(subFile.list().length == 0)) {
-					return listFiles(subFile.getPath(), dafaultDir);
+				defaultDir.addDirectory(newDir);
+				if (subFile.listFiles().length != 0) {
+					return listFiles(subFile.getPath(), defaultDir);
 				}
 			} else {
 				File newFile = new File(subFile.getPath());
-				dafaultDir.addFile(newFile);
+				defaultDir.addFile(newFile);
 			}
 		}
-		// TODO: check if it can actually be reached
-		return dafaultDir;
+		return defaultDir;
 
 	}
 }

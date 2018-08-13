@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import library.models.data.Directory;
 import library.models.network.MessageType;
 import library.models.network.NetworkMessage;
 import library.util.MessagingLogger;
@@ -24,7 +25,7 @@ public class Communication implements CommunicationInterface {
 	protected OutputThread outputThread;
 	protected HeartbeatThread heartbeatThread;
 	protected FileThread fileThread;
-
+	protected Directory listFiles;
 	protected long messageCounter = 0;
 	protected HashMap<Long, NetworkMessage> pendingRequests = new HashMap<>();
 

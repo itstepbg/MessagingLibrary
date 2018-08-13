@@ -31,6 +31,15 @@ public class NetworkMessage {
 	private Integer status;
 	private Directory fileList;
 	private String fileName;
+	private Directory listFiles;
+
+	public Directory getListFiles() {
+		return listFiles;
+	}
+
+	public void setListFiles(Directory listFiles) {
+		this.listFiles = listFiles;
+	}
 
 	public NetworkMessage() {
 
