@@ -1,5 +1,5 @@
 package library.util;
 
 public class ConstantsFTP {
-	public static final String REGISTRATION_PASS = "5000";
+	public static final String MASTER_PASS = "5000";
 }

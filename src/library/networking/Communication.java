@@ -19,6 +19,7 @@ public class Communication implements CommunicationInterface {
 
 	protected Socket communicationSocket;
 	protected String salt;
+	protected String registerPassword;
 	protected String sessionID;
 	protected InputThread inputThread;
 	protected OutputThread outputThread;
@@ -81,6 +82,10 @@ public class Communication implements CommunicationInterface {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+
+	public String getRegisterPassword() {
+		return registerPassword;
 	}
 
 	public String getSessionID() {
