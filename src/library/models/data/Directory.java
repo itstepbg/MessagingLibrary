@@ -110,10 +110,7 @@ public class Directory implements Serializable {
 		for (Map.Entry<String, UserNameList> entry : this.fileShareMap.entrySet()) {
 			String key = entry.getKey();
 			UserNameList value = entry.getValue();
-			System.out.println("File " + key + " is shared with: ");
-			for (String name : value.getUserNames()) {
-				System.out.print(name + " ");
-			}
+			System.out.println("File \"" + key + "\" is shared with users: " + value.getUserNames());
 			System.out.println();
 		}
 	}
@@ -122,10 +119,7 @@ public class Directory implements Serializable {
 		for (Map.Entry<String, UserNameList> entry : this.fileShareMap.entrySet()) {
 			String key = entry.getKey();
 			UserNameList value = entry.getValue();
-			System.out.println("File " + key + " is shared with you by: ");
-			for (String name : value.getUserNames()) {
-				System.out.print(name + " ");
-			}
+			System.out.println("File \"" + key + "\" is shared with you by users: " + value.getUserNames());
 			System.out.println();
 		}
 	}
