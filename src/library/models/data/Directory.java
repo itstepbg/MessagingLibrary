@@ -3,7 +3,9 @@ package library.models.data;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,11 +24,14 @@ public class Directory implements Serializable {
 	private String name;
 	private List<Directory> directories;
 	private List<File> files;
+	private Map<String, UserNameList> fileShareMap;
+	private UserNameList userNames;
 
 	public Directory() {
 		this.name = "";
 		this.directories = new ArrayList<Directory>();
 		this.files = new ArrayList<File>();
+		this.fileShareMap = new HashMap<String, UserNameList>();
 	}
 
 	public Directory(String name) {
@@ -84,5 +89,50 @@ public class Directory implements Serializable {
 
 	public String getName() {
 		return name;
+	}
+
+	public void putInFileShareMap(String file, UserNameList userNames) {
+		fileShareMap.put(file, userNames);
+	}
+
+	public void addUserToShareWith(String file, String userName) {
+		// check if the map doesn't contain mapping for this file
+		if (!fileShareMap.containsKey(file)) {
+			userNames = new UserNameList();
+		}
+		if (!userNames.getUserNames().contains(userName)) {
+			userNames.addUserName(userName);
+		}
+		putInFileShareMap(file, userNames);
+	}
+
+	public void printFilesSharedByYou() {
+		for (Map.Entry<String, UserNameList> entry : this.fileShareMap.entrySet()) {
+			String key = entry.getKey();
+			UserNameList value = entry.getValue();
+			System.out.println("File " + key + " is shared with: ");
+			for (String name : value.getUserNames()) {
+				System.out.print(name + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	public void printFilesSharedWithYou() {
+		for (Map.Entry<String, UserNameList> entry : this.fileShareMap.entrySet()) {
+			String key = entry.getKey();
+			UserNameList value = entry.getValue();
+			System.out.println("File " + key + " is shared with you by: ");
+			for (String name : value.getUserNames()) {
+				System.out.print(name + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	@XmlElementWrapper
+	@XmlElement(name = "fileShareWith")
+	public Map<String, UserNameList> getFileShareMap() {
+		return fileShareMap;
 	}
 }
