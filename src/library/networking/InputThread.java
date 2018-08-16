@@ -3,10 +3,12 @@ package library.networking;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.Socket;
 
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import library.models.network.NetworkMessage;
 
@@ -51,11 +53,24 @@ public class InputThread extends CommunicationThread {
 	}
 
 	private NetworkMessage deserializeMessage(String messageXml) {
-		Serializer serializer = new Persister();
+		// Serializer serializer = new Persister();
+		// NetworkMessage networkMessage = null;
+		// try {
+		// networkMessage = serializer.read(NetworkMessage.class, messageXml);
+		// } catch (Exception e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 		NetworkMessage networkMessage = null;
+
 		try {
-			networkMessage = serializer.read(NetworkMessage.class, messageXml);
-		} catch (Exception e) {
+			JAXBContext contextB = JAXBContext.newInstance(NetworkMessage.class);
+			StringReader reader = new StringReader(messageXml);
+			Unmarshaller unmarshallerB = contextB.createUnmarshaller();
+			networkMessage = (NetworkMessage) unmarshallerB.unmarshal(reader);
+			reader.close();
+
+		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

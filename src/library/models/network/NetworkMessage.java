@@ -2,6 +2,8 @@ package library.models.network;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import library.models.data.Directory;
+
 @XmlRootElement
 public class NetworkMessage {
 
@@ -9,6 +11,12 @@ public class NetworkMessage {
 	public static final int STATUS_ERROR_CREATING_USER = 1;
 	public static final int STATUS_ERROR_LOGGING_IN = 2;
 	public static final int STATUS_ERROR_CREATING_FILE = 3;
+	public static final int STATUS_ERROR_DELETING_FILE = 4;
+	public static final int STATUS_ERROR_COPYING_FILE = 5;
+	public static final int STATUS_ERROR_CREATING_DIRECTORY = 6;
+	public static final int STATUS_ERROR_MOVING_FILE = 7;
+	public static final int STATUS_ERROR_RENAME_FILE = 8;
+	public static final int STATUS_ERROR_DOWNLOADING_FILE = 9;
 
 	private MessageType type;
 	private Long messageId;
@@ -21,6 +29,8 @@ public class NetworkMessage {
 	private String filePath;
 	private String newFilePath;
 	private Integer status;
+	private Directory fileList;
+	private String fileName;
 
 	public NetworkMessage() {
 
@@ -112,5 +122,21 @@ public class NetworkMessage {
 
 	public void setNewFilePath(String newFilePath) {
 		this.newFilePath = newFilePath;
+	}
+
+	public Directory getFileList() {
+		return fileList;
+	}
+
+	public void setFileList(Directory fileList) {
+		this.fileList = fileList;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }

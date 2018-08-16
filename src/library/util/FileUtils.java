@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 
+import library.models.data.Directory;
+
 public class FileUtils {
 
 	public final static int FILE_READ_WRITE_BUFFER_SIZE = 512;
@@ -86,7 +88,14 @@ public class FileUtils {
 	public static boolean createDirectory(String path) {
 		Path newDir = null;
 		try {
-			newDir = Files.createDirectories(Paths.get(path));
+			if (Files.exists(Paths.get(path))) {
+				newDir = Files.createDirectories(Paths.get(path));
+				return false;
+			} else {
+				newDir = Files.createDirectories(Paths.get(path));
+				return true;
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -96,6 +105,9 @@ public class FileUtils {
 
 	public static boolean moveFile(String sourcePath, String targetPath) {
 		Path newPath = null;
+		if (!Files.exists(Paths.get(sourcePath)) || Files.exists(Paths.get(targetPath))) {
+			return false;
+		}
 		try {
 			newPath = Files.move(Paths.get(sourcePath), Paths.get(targetPath));
 		} catch (IOException e) {
@@ -112,8 +124,14 @@ public class FileUtils {
 
 	public static boolean copyFile(String sourcePath, String targetPath) {
 		Path newPath = null;
+		// if source path doesn't exist
+		// or the file that we are copying, already exists in the target directory
+		if (!Files.exists(Paths.get(sourcePath)) || Files.exists(Paths.get(targetPath))) {
+			return false;
+		}
 		try {
 			newPath = Files.copy(Paths.get(sourcePath), Paths.get(targetPath));
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -131,5 +149,27 @@ public class FileUtils {
 			e.printStackTrace();
 		}
 		return success;
+	}
+
+	public static Directory listFiles(String dir, Directory defaultDir) {
+		File file = new File(dir);
+
+		File[] listFiles = file.listFiles();
+
+		for (File subFile : listFiles) {
+			if (subFile.isDirectory()) {
+				// add it to list directories and recur it
+				Directory newDir = new Directory(subFile.getPath());
+				defaultDir.addDirectory(newDir);
+				if (subFile.listFiles().length != 0) {
+					return listFiles(subFile.getPath(), defaultDir);
+				}
+			} else {
+				File newFile = new File(subFile.getPath());
+				defaultDir.addFile(newFile);
+			}
+		}
+		return defaultDir;
+
 	}
 }

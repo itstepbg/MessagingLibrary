@@ -6,13 +6,14 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import library.models.data.Directory;
 import library.models.network.MessageType;
 import library.models.network.NetworkMessage;
 import library.util.MessagingLogger;
 
 public class Communication implements CommunicationInterface {
 
-	public final static int HEARTBEAT_INTERVAL = 5;
+	public final static int HEARTBEAT_INTERVAL = 500;
 	public final static int TIMEOUT_BUFFER_SIZE = 3;
 
 	protected static Logger logger = MessagingLogger.getLogger();
@@ -24,7 +25,7 @@ public class Communication implements CommunicationInterface {
 	protected OutputThread outputThread;
 	protected HeartbeatThread heartbeatThread;
 	protected FileThread fileThread;
-
+	protected Directory listFiles;
 	protected long messageCounter = 0;
 	protected HashMap<Long, NetworkMessage> pendingRequests = new HashMap<>();
 
@@ -134,7 +135,7 @@ public class Communication implements CommunicationInterface {
 
 	// File stuff.
 
-	protected void handleIncomingFile(String path) {
+	protected void handleIncomingFile(String path, Long messageId) {
 		NetworkMessage statusMessage = new NetworkMessage();
 		statusMessage.setType(MessageType.STATUS_RESPONSE);
 
@@ -148,6 +149,25 @@ public class Communication implements CommunicationInterface {
 		}
 
 		fileThread.start();
+		statusMessage.setMessageId(messageId);
+		sendMessage(statusMessage);
+	}
+
+	protected void handleOutcomingFile(String path, Long messageId) {
+		NetworkMessage statusMessage = new NetworkMessage();
+		statusMessage.setType(MessageType.STATUS_RESPONSE);
+
+		File newFile = new File(path);
+
+		if (!newFile.exists()) {
+			statusMessage.setStatus(NetworkMessage.STATUS_ERROR_DOWNLOADING_FILE);
+		} else {
+			statusMessage.setStatus(NetworkMessage.STATUS_OK);
+			fileThread = new FileThread(this, path, FileThread.MODE_UPLOAD);
+		}
+
+		fileThread.start();
+		statusMessage.setMessageId(messageId);
 		sendMessage(statusMessage);
 	}
 
@@ -157,6 +177,10 @@ public class Communication implements CommunicationInterface {
 
 	public void createFileUploadThread(String filePath) {
 		fileThread = new FileThread(this, filePath, FileThread.MODE_UPLOAD);
+	}
+
+	public void createFileDownloadThread(String filePath) {
+		fileThread = new FileThread(this, filePath, FileThread.MODE_DOWNLOAD);
 	}
 
 	protected void startFileUpload() {
