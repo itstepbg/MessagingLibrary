@@ -17,6 +17,8 @@ public class NetworkMessage {
 	public static final int STATUS_ERROR_MOVING_FILE = 7;
 	public static final int STATUS_ERROR_RENAME_FILE = 8;
 	public static final int STATUS_ERROR_DOWNLOADING_FILE = 9;
+	public static final int STATUS_ERROR_SHARING_FILE = 10;
+	public static final int STATUS_NON_EXISTING_USER = 11;
 
 	private MessageType type;
 	private Long messageId;
