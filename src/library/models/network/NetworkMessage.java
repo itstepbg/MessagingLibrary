@@ -20,11 +20,16 @@ public class NetworkMessage {
 
 	private MessageType type;
 	private Long messageId;
+
+	private String clientFQDN;
+	private String salt;
+	private int iterations;
+	private String initVector;
 	private String actor;
 	private String user;
 	private Long groupId;
 	private String text;
-	private String passwordHash;
+	private String password;
 	private String email;
 	private String filePath;
 	private String newFilePath;
@@ -60,8 +65,8 @@ public class NetworkMessage {
 		this.text = text;
 	}
 
-	public void setPasswordHash(String passwordHash) {
-		this.passwordHash = passwordHash;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public void setEmail(String email) {
@@ -96,8 +101,8 @@ public class NetworkMessage {
 		return text;
 	}
 
-	public String getPasswordHash() {
-		return passwordHash;
+	public String getPassword() {
+		return password;
 	}
 
 	public String getEmail() {
@@ -138,5 +143,36 @@ public class NetworkMessage {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt2) {
+		this.salt = salt2;
+	}
+
+	public int getIterations() {
+		return iterations;
+	}
+
+	public void setIterations(int encodedIterations) {
+		this.iterations = encodedIterations;
+	}
+
+	public String getInitVector() {
+		return initVector;
+	}
+
+	public void setInitVector(String initVector) {
+		this.initVector = initVector;
+	}
+	public String getClientFQDN() {
+		return clientFQDN;
+	}
+
+	public void setClientFQDN(String clientFQDN) {
+		this.clientFQDN = clientFQDN;
 	}
 }

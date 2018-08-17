@@ -20,6 +20,7 @@ public class Communication implements CommunicationInterface {
 
 	protected Socket communicationSocket;
 	protected String salt;
+	protected String registerPassword;
 	protected String sessionID;
 	protected InputThread inputThread;
 	protected OutputThread outputThread;
@@ -34,7 +35,7 @@ public class Communication implements CommunicationInterface {
 
 		inputThread = CommunicationThreadFactory.createInputThread(communicationSocket);
 		outputThread = CommunicationThreadFactory.createOutputThread(communicationSocket);
-		heartbeatThread = CommunicationThreadFactory.createHeartbeatThread(HEARTBEAT_INTERVAL);
+		//heartbeatThread = CommunicationThreadFactory.createHeartbeatThread(HEARTBEAT_INTERVAL);
 
 		startCommunicationThreads();
 	}
@@ -42,11 +43,11 @@ public class Communication implements CommunicationInterface {
 	protected void startCommunicationThreads() {
 		inputThread.setCommunicationListener(this);
 		outputThread.setCommunicationListener(this);
-		heartbeatThread.setCommunicationListener(this);
+		//heartbeatThread.setCommunicationListener(this);
 
 		inputThread.start();
 		outputThread.start();
-		heartbeatThread.start();
+		//heartbeatThread.start();
 	}
 
 	@Override
@@ -58,7 +59,7 @@ public class Communication implements CommunicationInterface {
 
 	@Override
 	public void handleMessage(NetworkMessage networkMessage) {
-		heartbeatThread.resetTimeoutBuffer();
+	//	heartbeatThread.resetTimeoutBuffer();
 	}
 
 	@Override
@@ -82,6 +83,10 @@ public class Communication implements CommunicationInterface {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+
+	public String getRegisterPassword() {
+		return registerPassword;
 	}
 
 	public String getSessionID() {
