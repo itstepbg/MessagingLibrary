@@ -86,21 +86,22 @@ public class FileUtils {
 	}
 
 	public static boolean createDirectory(String path) {
-		Path newDir = null;
-		try {
-			if (Files.exists(Paths.get(path))) {
-				newDir = Files.createDirectories(Paths.get(path));
-				return false;
-			} else {
-				newDir = Files.createDirectories(Paths.get(path));
-				return true;
-			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		File newDir = new File(path);
+		if (!newDir.exists()) {
+			newDir.mkdirs();
+			return true;
 		}
-		return newDir != null;
+//		try {
+//			} else {
+//				newDir = Files.createDirectories(Paths.get(path));
+//				return true;
+
+//		} catch (IOException e) {
+//			 TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		return false;
+//		return newDir != null;
 	}
 
 	public static boolean moveFile(String sourcePath, String targetPath) {
