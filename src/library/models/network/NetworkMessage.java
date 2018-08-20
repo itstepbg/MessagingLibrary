@@ -170,6 +170,7 @@ public class NetworkMessage {
 	public void setInitVector(String initVector) {
 		this.initVector = initVector;
 	}
+
 	public String getClientFQDN() {
 		return clientFQDN;
 	}
