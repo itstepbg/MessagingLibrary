@@ -51,6 +51,7 @@ public class FileUtils {
 		}
 
 		if (totalBytesRead > 0) {
+//			return Crypto.encryptAES256(new String(readChunk), initVector, key);
 			return Base64.getEncoder().encodeToString(readChunk);
 		} else {
 			return FileUtils.EOF_TAG;
@@ -91,17 +92,7 @@ public class FileUtils {
 			newDir.mkdirs();
 			return true;
 		}
-//		try {
-//			} else {
-//				newDir = Files.createDirectories(Paths.get(path));
-//				return true;
-
-//		} catch (IOException e) {
-//			 TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		return false;
-//		return newDir != null;
 	}
 
 	public static boolean moveFile(String sourcePath, String targetPath) {
