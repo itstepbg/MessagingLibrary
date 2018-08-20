@@ -140,7 +140,7 @@ public class Communication implements CommunicationInterface {
 
 	// File stuff.
 
-	protected void handleIncomingFile(String path, Long messageId) {
+	protected void handleIncomingFile(String path, Long messageId, String key, byte [] initVector) {
 		NetworkMessage statusMessage = new NetworkMessage();
 		statusMessage.setType(MessageType.STATUS_RESPONSE);
 
@@ -150,7 +150,7 @@ public class Communication implements CommunicationInterface {
 			statusMessage.setStatus(NetworkMessage.STATUS_ERROR_CREATING_FILE);
 		} else {
 			statusMessage.setStatus(NetworkMessage.STATUS_OK);
-			fileThread = new FileThread(this, path, FileThread.MODE_DOWNLOAD);
+			fileThread = new FileThread(this, path, FileThread.MODE_DOWNLOAD, key, initVector);
 		}
 
 		fileThread.start();
@@ -158,7 +158,7 @@ public class Communication implements CommunicationInterface {
 		sendMessage(statusMessage);
 	}
 
-	protected void handleOutcomingFile(String path, Long messageId) {
+	protected void handleOutcomingFile(String path, Long messageId, String key, byte [] initVector) {
 		NetworkMessage statusMessage = new NetworkMessage();
 		statusMessage.setType(MessageType.STATUS_RESPONSE);
 
@@ -168,7 +168,7 @@ public class Communication implements CommunicationInterface {
 			statusMessage.setStatus(NetworkMessage.STATUS_ERROR_DOWNLOADING_FILE);
 		} else {
 			statusMessage.setStatus(NetworkMessage.STATUS_OK);
-			fileThread = new FileThread(this, path, FileThread.MODE_UPLOAD);
+			fileThread = new FileThread(this, path, FileThread.MODE_UPLOAD, key, initVector);
 		}
 
 		fileThread.start();
@@ -180,12 +180,13 @@ public class Communication implements CommunicationInterface {
 		fileThread.addFileChunk(fileChunk);
 	}
 
-	public void createFileUploadThread(String filePath) {
-		fileThread = new FileThread(this, filePath, FileThread.MODE_UPLOAD);
+	public void createFileUploadThread(String filePath, String key, byte[] initVector) {
+		fileThread = new FileThread(this, filePath, FileThread.MODE_UPLOAD, key, initVector);
 	}
 
-	public void createFileDownloadThread(String filePath) {
-		fileThread = new FileThread(this, filePath, FileThread.MODE_DOWNLOAD);
+	public void createFileDownloadThread(String filePath, String key,  byte[] initVector) {
+
+		fileThread = new FileThread(this, filePath, FileThread.MODE_DOWNLOAD, key, initVector);
 	}
 
 	protected void startFileUpload() {

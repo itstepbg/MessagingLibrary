@@ -19,8 +19,10 @@ public class FileUtils {
 	public final static String EOF_TAG = "!EOF!";
 
 	// TODO Read and write should be done through file channels.
-	public static void writeToFile(OutputStream outputStream, String base64) {
+	public static void writeToFile(OutputStream outputStream, String base64, byte[] initVector, String key) {
 		byte[] decodedBytes = Base64.getDecoder().decode(base64);
+//		byte[] decodedBytes = Crypto.decryptAES256(base64, initVector, key).getBytes();
+		
 
 		try {
 			outputStream.write(decodedBytes);
@@ -30,7 +32,7 @@ public class FileUtils {
 		}
 	}
 
-	public static String readFromFile(InputStream inputStream) {
+	public static String readFromFile(InputStream inputStream, String userPasswordHash, byte[] initializationVector) {
 		int totalBytesRead = -1;
 		byte[] readBuffer = new byte[FILE_READ_WRITE_BUFFER_SIZE];
 		byte[] readChunk = new byte[] {};
@@ -51,7 +53,8 @@ public class FileUtils {
 		}
 
 		if (totalBytesRead > 0) {
-//			return Crypto.encryptAES256(new String(readChunk), initVector, key);
+//			String toReturn = Crypto.encryptAES256(new String(readChunk), initializationVector, userPasswordHash);
+//			return toReturn;
 			return Base64.getEncoder().encodeToString(readChunk);
 		} else {
 			return FileUtils.EOF_TAG;

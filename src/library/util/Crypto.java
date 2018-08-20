@@ -1,7 +1,10 @@
 package library.util;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -10,11 +13,16 @@ import java.util.Formatter;
 import java.util.Random;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Crypto {
+	
+	private final static String CIPHER_MODE = "AES/CBC/PKCS5PADDING";
+	private static final String ENCRYPTION_ALGO = "AES";
 
 	public static String generateHash(String input) {
 		String sha256 = "";
@@ -97,9 +105,9 @@ public class Crypto {
 		try {
 			String keyFirst16Bit = key.substring(0, 32);
 			IvParameterSpec iv = new IvParameterSpec(initVector);
-			SecretKeySpec skeySpec = new SecretKeySpec(keyFirst16Bit.getBytes("UTF-8"), "AES");
+			SecretKeySpec skeySpec = new SecretKeySpec(keyFirst16Bit.getBytes("UTF-8"), ENCRYPTION_ALGO);
 
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+			Cipher cipher = Cipher.getInstance(CIPHER_MODE);
 			cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
 
 			byte[] encrypted = cipher.doFinal(value.getBytes());
@@ -115,9 +123,9 @@ public class Crypto {
 		try {
 			String keyFirst16Bit = key.substring(0, 32);
 			IvParameterSpec iv = new IvParameterSpec(initVector);
-			SecretKeySpec skeySpec = new SecretKeySpec(keyFirst16Bit.getBytes("UTF-8"), "AES");
+			SecretKeySpec skeySpec = new SecretKeySpec(keyFirst16Bit.getBytes("UTF-8"), ENCRYPTION_ALGO);
 
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+			Cipher cipher = Cipher.getInstance(CIPHER_MODE);
 			cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 			byte[] original = cipher.doFinal(Base64.getDecoder().decode(encrypted));
 
@@ -127,6 +135,25 @@ public class Crypto {
 		}
 
 		return null;
+	}
+	
+	public static CipherInputStream getCipherInputStream(InputStream inputStream, String key, byte[] iv)
+			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
+		String keyFirst16Bit = key.substring(0, 32);
+		SecretKeySpec skeySpec = new SecretKeySpec(keyFirst16Bit.getBytes("UTF-8"), ENCRYPTION_ALGO);
+		Cipher cipher = Cipher.getInstance(CIPHER_MODE);
+		cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+		return new CipherInputStream(inputStream, cipher);
+	}
+	
+	public static CipherOutputStream getCipherOutputStream(OutputStream outputStream, String key, byte[] iv)
+			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
+		String keyFirst16Bit = key.substring(0, 32);
+		SecretKeySpec skeySpec = new SecretKeySpec(keyFirst16Bit.getBytes("UTF-8"), ENCRYPTION_ALGO);
+		
+		Cipher cipher = Cipher.getInstance(CIPHER_MODE);
+		cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+		return new CipherOutputStream(outputStream, cipher);
 	}
 
 

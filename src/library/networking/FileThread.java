@@ -3,11 +3,17 @@ package library.networking;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import javax.crypto.NoSuchPaddingException;
+
 import library.models.network.MessageType;
 import library.models.network.NetworkMessage;
+import library.util.Crypto;
 import library.util.FileUtils;
 import library.util.MessagingLogger;
 
@@ -20,25 +26,41 @@ public class FileThread extends Thread {
 
 	private BlockingQueue<String> fileChunks = new ArrayBlockingQueue<>(1024);
 
+	private byte[] initializationVector;
+	private String key;
 	private String path;
 	private InputStream inputStream;
 	private OutputStream outputStream;
 
 	private int mode;
 
-	public FileThread(CommunicationInterface communicationListener, String path, int mode) {
+	public FileThread(CommunicationInterface communicationListener, String path, int mode, String key, byte[] initVector) {
 		this.communicationListener = communicationListener;
 		this.path = path;
 		this.mode = mode;
+		this.key = key;
+		initializationVector = initVector;
 	}
 
 	@Override
 	public void run() {
 		if (mode == MODE_UPLOAD) {
-			inputStream = FileUtils.getFileInputStrem(path);
+//			inputStream = FileUtils.getFileInputStrem(path);
+			try {
+				inputStream = Crypto.getCipherInputStream(FileUtils.getFileInputStrem(path), key, initializationVector);
+			} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			uploadFile();
 		} else {
-			outputStream = FileUtils.getFileOutputStream(path);
+//			outputStream = FileUtils.getFileOutputStream(path);
+			try {
+				outputStream = Crypto.getCipherOutputStream(FileUtils.getFileOutputStream(path), key, initializationVector);
+			} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			downloadFile();
 		}
 	}
@@ -62,7 +84,7 @@ public class FileThread extends Thread {
 	private void uploadFile() {
 		// READING
 		while (!Thread.interrupted()) {
-			String base64 = FileUtils.readFromFile(inputStream);
+			String base64 = FileUtils.readFromFile(inputStream, key, initializationVector);
 
 			NetworkMessage networkMessage = new NetworkMessage();
 			networkMessage.setType(MessageType.UPLOAD_CHUNK);
@@ -104,7 +126,7 @@ public class FileThread extends Thread {
 						}
 						break;
 					} else {
-						FileUtils.writeToFile(outputStream, base64);
+						FileUtils.writeToFile(outputStream, base64, initializationVector, key);
 					}
 				}
 			} catch (InterruptedException e) {
